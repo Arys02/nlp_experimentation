@@ -1,19 +1,11 @@
 import pandas as pd
-from sklearn import preprocessing
+from sklearn.feature_extraction.text import CountVectorizer, HashingVectorizer
 
 
 def one_hot_encoding(x: pd.Series):
-    le = preprocessing.LabelEncoder()
-    df_x = x.to_frame()
-
-    le_x = df_x.apply(le.fit_transform)
-
-    enc = preprocessing.OneHotEncoder()
-    enc.fit(le_x)
-
-    on_hot_labels = enc.transform(le_x).toarray()
-
-    return on_hot_labels
+    vectorizer = HashingVectorizer(n_features=2**8)
+    X = vectorizer.fit_transform(x)
+    return X
 
 
 def make_features(df):
