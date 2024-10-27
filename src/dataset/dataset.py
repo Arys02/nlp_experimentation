@@ -1,12 +1,6 @@
-import os
-
-import numpy as np
 import pandas as pd
 import requests
 from sklearn.model_selection import train_test_split
-
-from src.config import RAW_DATA_DIR, ENCODED_DATA_DIR
-from src.features import make_features
 
 
 def make_dataset(filename):

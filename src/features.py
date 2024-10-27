@@ -1,9 +1,9 @@
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer, HashingVectorizer
+from sklearn.feature_extraction.text import HashingVectorizer
 
 
 def one_hot_encoding(x: pd.Series):
-    vectorizer = HashingVectorizer(n_features=2**8)
+    vectorizer = HashingVectorizer(n_features=2 ** 8)
     X = vectorizer.fit_transform(x)
     return X
 

@@ -1,8 +1,7 @@
 import click
 import joblib
-import numpy as np
 import pandas as pd
-from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import make_scorer, accuracy_score, precision_score
 from sklearn.model_selection import KFold, cross_validate, cross_val_score
 
 from features import make_features
@@ -45,8 +44,6 @@ def predict(input_filename, model_dump_filename, output_filename):
     df_final = pd.concat([df_final, pd.Series(name="prediction", data=y_pred)], axis=1)
     print(df_final.head)
     df_final.to_csv(output_filename, index=False)
-
-
 
 
 @click.command()
@@ -107,8 +104,6 @@ def evaluate_model(model, X, y):
     }
 
     scores = cross_validate(model, X, y, cv=kf, scoring=scoring)
-
-
 
     print(f"Result with {k} split :")
     for metric in scoring.keys():
