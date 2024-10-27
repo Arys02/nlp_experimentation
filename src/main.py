@@ -1,8 +1,9 @@
 import click
 import joblib
+import numpy as np
 import pandas as pd
 from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score
-from sklearn.model_selection import KFold, cross_validate
+from sklearn.model_selection import KFold, cross_validate, cross_val_score
 
 from features import make_features
 from models.models import make_model
@@ -83,24 +84,33 @@ def split_dataset(input_filename, output_dirname):
 
 
 def evaluate_model(model, X, y):
-    k = 5  # Vous pouvez ajuster cette valeur selon vos besoins
+    k = 10
 
-    # Créer un objet KFold
     kf = KFold(n_splits=k, shuffle=True, random_state=42)
 
-    # Définir les métriques d'évaluation
+    n_estimators = [50, 100, 150, 200, 250, 300, 350]
+
+    for val in n_estimators:
+        score = cross_val_score(model, X, y, cv=kf,
+                                scoring="accuracy")
+        print(f'Average score({val}): {"{:.3f}".format(score.mean())}')
+
+    cnt = 1
+    # split()  method generate indices to split data into training and test set.
+    for train_index, test_index in kf.split(X, y):
+        print(f'Fold:{cnt}, Train set: {len(train_index)}, Test set:{len(test_index)}')
+        cnt += 1
+
     scoring = {
         'accuracy': make_scorer(accuracy_score),
         'precision': make_scorer(precision_score, average='weighted', zero_division=0),
-        'recall': make_scorer(recall_score, average='weighted', zero_division=0),
-        'f1': make_scorer(f1_score, average='weighted', zero_division=0)
     }
 
-    # Exécuter la validation croisée
     scores = cross_validate(model, X, y, cv=kf, scoring=scoring)
 
-    # Afficher les résultats
-    print(f"Résultats de la validation croisée avec {k} plis:")
+
+
+    print(f"Result with {k} split :")
     for metric in scoring.keys():
         metric_scores = scores[f'test_{metric}']
         print(f"{metric.capitalize()} : {metric_scores.mean():.4f} (+/- {metric_scores.std() * 2:.4f})")
